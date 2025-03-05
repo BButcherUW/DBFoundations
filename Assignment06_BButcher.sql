@@ -224,16 +224,16 @@ GO
 -- from each table, but can select data from each view?
 
 Deny Select On Catagories to Public
-Grant Select On vCategories to Public
+Grant Select On vCategories to Public;
 GO
 Deny Select On Products to Public
-Grant Select On vProducts to Public
+Grant Select On vProducts to Public;
 GO
 Deny Select On Employees to Public
-Grant Select On vEmployess to Public
+Grant Select On vEmployess to Public;
 GO
 Deny Select On Inventories to Public
-Grant Select On vInventories to Public
+Grant Select On vInventories to Public;
 GO
 
 -- Question 3 (10% pts): How can you create a view to show a list of Category and Product names, 
@@ -269,13 +269,13 @@ GO
 Create View [dbo].[vProductsByCategories]
 AS
 	Select Top 1000000
-		CategoryName,
-		ProductName,
-		UnitPrice
+		C.CategoryName,
+		P.ProductName,
+		P.UnitPrice
 	From vCategories as C
 		Join vProducts as P
 		On C.CategoryID = P.CategoryID
-	Order By CategoryName, ProductName;
+	Order By C.CategoryName, P.ProductName;
 GO
 
 
@@ -311,13 +311,13 @@ GO
 Create View [dbo].[vInventoriesByProductsByDates]
 AS
 	Select Top 1000000
-		ProductName,
-		InventoryDate,
-		[Count]
+		P.ProductName,
+		I.InventoryDate,
+		I.[Count]
 	From vProducts as P
 		Join vInventories as I
 		 On P.ProductID = I.ProductID
-	Order By ProductName, InventoryDate, [Count];
+	Order By P.ProductName, I.InventoryDate, I.[Count];
 GO
 
 
@@ -359,7 +359,7 @@ Select Distinct Top 1000000 InventoryDate, Concat (EmployeeFirstName,' ',Employe
 From vInventories as I
 	Join vEmployees as E
 	 On I.EmployeeID = E.EmployeeID
-Group By InventoryDate, EmployeeFirstName, EmployeeLastName
+Order By InventoryDate, EmployeeFirstName, EmployeeLastName
 GO
 */
 
@@ -367,12 +367,12 @@ GO
 Create View [dbo].[vInventoriesByEmployeesByDates]
 AS
 	Select Distinct Top 1000000
-		InventoryDate,
+		I.InventoryDate,
 		Concat (EmployeeFirstName,' ',EmployeeLastName) as EmployeeName
 	From vInventories as I
 		Join vEmployees as E
 		On I.EmployeeID = E.EmployeeID
-	Group By InventoryDate, EmployeeFirstName, EmployeeLastName
+	Order By I.InventoryDate, EmployeeName;
 GO
 
 -- Question 6 (10% pts): How can you create a view show a list of Categories, Products, 
@@ -416,16 +416,16 @@ GO
 Create View [dbo].[vInventoriesByProductsByCategories]
 AS
 	Select Top 1000000
-		CategoryName,
-		ProductName,
-		InventoryDate,
-		[Count]
+		C.CategoryName,
+		P.ProductName,
+		I.InventoryDate,
+		I.[Count]
 		From vCategories as C
 		Join vProducts as P
 		 ON C.CategoryID = P.CategoryID
 		Join vInventories as I
 		 On P.ProductID = I.ProductID
-	Order By CategoryName, ProductName, InventoryDate, [Count];
+	Order By C.CategoryName, P.ProductName, I.InventoryDate, I.[Count];
 GO
 
 -- Question 7 (10% pts): How can you create a view to show a list of Categories, Products, 
@@ -474,10 +474,10 @@ Order By InventoryDate, CategoryName, ProductName, EmployeeName;
 Create View [dbo].[vInventoriesByProductsByEmployees]
 AS
 	Select Top 1000000
-		CategoryName,
-		ProductName,
-		InventoryDate,
-		[Count],
+		C.CategoryName,
+		P.ProductName,
+		I.InventoryDate,
+		I.[Count],
 		Concat (EmployeeFirstName,' ',EmployeeLastName) as EmployeeName
 		From vCategories as C
 		Join vProducts as P
@@ -486,7 +486,7 @@ AS
 		 On P.ProductID = I.ProductID
 		Join vEmployees as E
 		 On I.EmployeeID = E.EmployeeID
-	Order By InventoryDate, CategoryName, ProductName, EmployeeName;
+	Order By I.InventoryDate, C.CategoryName, P.ProductName, EmployeeName;
 GO
 
 -- Question 8 (10% pts): How can you create a view to show a list of Categories, Products, 
@@ -514,10 +514,10 @@ GO
 Create View [dbo].[vInventoriesForChaiAndChangByEmployees]
 AS
 	Select Top 1000000 
-		CategoryName,
-		ProductName,
-		InventoryDate,
-		[Count],
+		C.CategoryName,
+		P.ProductName,
+		I.InventoryDate,
+		I.[Count],
 		Concat (EmployeeFirstName,' ',EmployeeLastName) as EmployeeName
 		From vCategories as C
 		Join vProducts as P
@@ -527,7 +527,7 @@ AS
 		Join vEmployees as E
 		 On I.EmployeeID = E.EmployeeID
 	Where I.ProductID In (Select ProductID From vProducts Where ProductName In ('Chai', 'Chang'))
-	Order By InventoryDate, CategoryName, ProductName, EmployeeName;
+	Order By I.InventoryDate, C.CategoryName, P.ProductName, EmployeeName;
 GO
 
 
